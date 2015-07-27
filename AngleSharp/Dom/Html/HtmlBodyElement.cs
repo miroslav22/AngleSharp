@@ -1,4 +1,8 @@
-﻿namespace AngleSharp.Dom.Html
+﻿using AngleSharp.Extensions;
+using AngleSharp.Network;
+using AngleSharp.Services.Scripting;
+
+namespace AngleSharp.Dom.Html
 {
     using AngleSharp.Html;
     using System;
@@ -16,6 +20,19 @@
         public HtmlBodyElement(Document owner, String prefix = null)
             : base(owner, Tags.Body, prefix, NodeFlags.Special | NodeFlags.ImplicitelyClosed)
         {
+            //  Hook up onload attribute
+            owner.Loaded += (sender, ev) =>
+            {
+                var onloadAttribute = GetAttribute("onload");
+
+                if (string.IsNullOrEmpty(onloadAttribute) == false)
+                {
+                    var scriptEngine = Owner.Options.GetScriptEngine(MimeTypes.DefaultJavaScript);
+
+                    if (scriptEngine != null)
+                        scriptEngine.Evaluate(onloadAttribute, new ScriptOptions {Context = owner.DefaultView, Document = owner});
+                }
+            };
         }
 
         #endregion
