@@ -23,15 +23,8 @@ namespace AngleSharp.Dom.Html
             //  Hook up onload attribute
             owner.Loaded += (sender, ev) =>
             {
-                var onloadAttribute = GetAttribute("onload");
-
-                if (string.IsNullOrEmpty(onloadAttribute) == false)
-                {
-                    var scriptEngine = Owner.Options.GetScriptEngine(MimeTypes.DefaultJavaScript);
-
-                    if (scriptEngine != null)
-                        scriptEngine.Evaluate(onloadAttribute, new ScriptOptions {Context = owner.DefaultView, Document = owner});
-                }
+                if (Owner.Context.AutoExecuteJavascript)
+                    ManuallyRunOnLoad();
             };
         }
 
@@ -167,6 +160,23 @@ namespace AngleSharp.Dom.Html
         {
             add { AddEventListener(EventNames.Unload, value); }
             remove { RemoveEventListener(EventNames.Unload, value); }
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void ManuallyRunOnLoad()
+        {
+            var onloadAttribute = GetAttribute("onload");
+
+            if (string.IsNullOrEmpty(onloadAttribute) == false)
+            {
+                var scriptEngine = Owner.Options.GetScriptEngine(MimeTypes.DefaultJavaScript);
+
+                if (scriptEngine != null)
+                    scriptEngine.Evaluate(onloadAttribute, new ScriptOptions { Context = Owner.DefaultView, Document = Owner });
+            }
         }
 
         #endregion

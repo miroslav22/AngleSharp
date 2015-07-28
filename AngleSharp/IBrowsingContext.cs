@@ -56,6 +56,11 @@ namespace AngleSharp
         IDocument Creator { get; }
 
         /// <summary>
+        /// Gets/Sets if javascript should be auto-executed
+        /// </summary>
+        bool AutoExecuteJavascript { get; set; }
+
+        /// <summary>
         /// Fired when the active document changes
         /// </summary>
         event EventHandler<DocumentChangedEventArgs> ActiveDocumentChanged; 

@@ -19,6 +19,8 @@
         Boolean _parserInserted;
         Boolean _forceAsync;
         Action _runScript;
+        private string _manualScriptSource;
+        private IResponse _manualScriptResponse;
 
         #endregion
 
@@ -153,8 +155,30 @@
                 _runScript();
         }
 
+        public void ManuallyRun()
+        {
+            var options = CreateOptions();
+
+            if (_manualScriptResponse != null)
+            {
+                try { Engine.Evaluate(_manualScriptResponse, options); }
+                catch { /* We omit failed 3rd party services */ }
+            }
+            else if (_manualScriptSource != null)
+            {
+                try { Engine.Evaluate(_manualScriptSource, options); }
+                catch { /* We omit failed 3rd party services */ }
+            }
+        }
+
         void RunFromResponse(IResponse response)
         {
+            if (Owner.Context.AutoExecuteJavascript == false)
+            {
+                _manualScriptResponse = response;
+                return;
+            }
+
             var options = CreateOptions();
 
             try { Engine.Evaluate(response, options); }
@@ -166,6 +190,12 @@
 
         void RunFromSource()
         {
+            if (Owner.Context.AutoExecuteJavascript == false)
+            {
+                _manualScriptSource = Text;
+                return;
+            }
+
             var options = CreateOptions();
 
             try { Engine.Evaluate(Text, options); }

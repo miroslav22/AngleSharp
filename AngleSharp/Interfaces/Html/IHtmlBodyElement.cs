@@ -9,5 +9,9 @@
     [DomName("HTMLBodyElement")]
     public interface IHtmlBodyElement : IHtmlElement, IWindowEventHandlers
     {
+        /// <summary>
+        /// Manually runs the on load event handler
+        /// </summary>
+        void ManuallyRunOnLoad();
     }
 }

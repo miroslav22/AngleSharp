@@ -50,5 +50,10 @@
         /// </summary>
         [DomName("text")]
         String Text { get; set; }
+
+        /// <summary>
+        /// Manually runs the script
+        /// </summary>
+        void ManuallyRun();
     }
 }

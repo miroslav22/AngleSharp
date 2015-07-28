@@ -1,4 +1,6 @@
-﻿namespace AngleSharp.Dom.Html
+﻿using System.Threading;
+
+namespace AngleSharp.Dom.Html
 {
     using AngleSharp.Dom.Collections;
     using AngleSharp.Extensions;
@@ -210,7 +212,11 @@
             var replace = createdBrowsingContext || owner.ReadyState != DocumentReadyState.Complete;
             var scheme = action.Scheme;
             var method = Method.ToEnum(HttpMethod.Get);
-            return SubmitForm(method, scheme, action);
+            var newDocumentTask = SubmitForm(method, scheme, action);
+
+            newDocumentTask.ContinueWith(task => targetBrowsingContext?.NavigateTo(task.Result));
+            
+            return newDocumentTask;
         }
 
         /// <summary>
@@ -287,9 +293,9 @@
             //http://www.whatwg.org/specs/web-apps/current-work/multipage/association-of-controls-and-forms.html#dom-form-requestautocomplete
         }
 
-        #endregion
+#endregion
 
-        #region Helpers
+#region Helpers
 
         Task<IDocument> SubmitForm(HttpMethod method, String scheme, Url action)
         {
@@ -478,6 +484,6 @@
             return MimeTypes.UrlencodedForm;
         }
 
-        #endregion
+#endregion
     }
 }

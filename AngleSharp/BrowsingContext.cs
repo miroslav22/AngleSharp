@@ -16,13 +16,14 @@ namespace AngleSharp
     {
         #region Fields
 
-        readonly IConfiguration _configuration;
-        readonly Sandboxes _security;
-        readonly IBrowsingContext _parent;
-        readonly IDocument _creator;
-        readonly IDocumentLoader _loader;
-        readonly IHistory _history;
-        IDocument _active;
+        private readonly IConfiguration _configuration;
+        private readonly Sandboxes _security;
+        private readonly IBrowsingContext _parent;
+        private readonly IDocument _creator;
+        private readonly IDocumentLoader _loader;
+        private readonly IHistory _history;
+        private IDocument _active;
+        private readonly object _padlock = new object();
 
         #endregion
 
@@ -31,7 +32,7 @@ namespace AngleSharp
         /// <summary>
         /// Fired when the active document changes
         /// </summary>
-        public event EventHandler<DocumentChangedEventArgs> ActiveDocumentChanged; 
+        public event EventHandler<DocumentChangedEventArgs> ActiveDocumentChanged;
 
         #endregion
 
@@ -44,9 +45,8 @@ namespace AngleSharp
             _loader = this.CreateLoader();
             _history = this.CreateHistory();
         }
-        
-        internal BrowsingContext(IBrowsingContext parent, Sandboxes security)
-            : this(parent.Configuration, security)
+
+        internal BrowsingContext(IBrowsingContext parent, Sandboxes security) : this(parent.Configuration, security)
         {
             _parent = parent;
             _creator = _parent.Active;
@@ -77,12 +77,15 @@ namespace AngleSharp
         /// <param name="document">The new document.</param>
         public void NavigateTo(IDocument document)
         {
-            if (_history != null)
-                _history.PushState(document, document.Title, document.Url);
+            lock (_padlock)
+            {
+                if (_history != null)
+                    _history.PushState(document, document.Title, document.Url);
 
-            _active = document;
+                _active = document;
 
-            ActiveDocumentChanged?.Invoke(this, new DocumentChangedEventArgs(_active));
+                ActiveDocumentChanged?.Invoke(this, new DocumentChangedEventArgs(_active));
+            }
         }
 
         #endregion
@@ -156,6 +159,11 @@ namespace AngleSharp
         {
             get { return _security; }
         }
+
+        /// <summary>
+        /// Gets/sets if javascript should be auto-executed
+        /// </summary>
+        public bool AutoExecuteJavascript { get; set; }
 
         #endregion
     }
