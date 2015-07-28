@@ -1,4 +1,7 @@
-﻿namespace AngleSharp
+﻿using System;
+using AngleSharp.Events;
+
+namespace AngleSharp
 {
     using AngleSharp.Dom;
     using AngleSharp.Extensions;
@@ -23,8 +26,17 @@
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Fired when the active document changes
+        /// </summary>
+        public event EventHandler<DocumentChangedEventArgs> ActiveDocumentChanged; 
+
+        #endregion
+
         #region ctor
-        
+
         internal BrowsingContext(IConfiguration configuration, Sandboxes security)
         {
             _configuration = configuration;
@@ -69,6 +81,8 @@
                 _history.PushState(document, document.Title, document.Url);
 
             _active = document;
+
+            ActiveDocumentChanged?.Invoke(this, new DocumentChangedEventArgs(_active));
         }
 
         #endregion

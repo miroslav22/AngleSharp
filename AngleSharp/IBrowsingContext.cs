@@ -1,4 +1,7 @@
-﻿namespace AngleSharp
+﻿using System;
+using AngleSharp.Events;
+
+namespace AngleSharp
 {
     using AngleSharp.Dom;
     using AngleSharp.Network;
@@ -51,6 +54,11 @@
         /// creation.
         /// </summary>
         IDocument Creator { get; }
+
+        /// <summary>
+        /// Fired when the active document changes
+        /// </summary>
+        event EventHandler<DocumentChangedEventArgs> ActiveDocumentChanged; 
 
         /// <summary>
         /// Navigates to the given document. Includes the document in the

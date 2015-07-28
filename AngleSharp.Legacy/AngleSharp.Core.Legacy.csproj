@@ -1736,6 +1736,9 @@
     <Compile Include="..\AngleSharp\Events\CssParseStartEvent.cs">
       <Link>Events\CssParseStartEvent.cs</Link>
     </Compile>
+    <Compile Include="..\AngleSharp\Events\DocumentChangedEventArgs.cs">
+      <Link>Events\DocumentChangedEventArgs.cs</Link>
+    </Compile>
     <Compile Include="..\AngleSharp\Events\HtmlParseErrorEvent.cs">
       <Link>Events\HtmlParseErrorEvent.cs</Link>
     </Compile>
