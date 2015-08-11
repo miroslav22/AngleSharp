@@ -214,7 +214,7 @@ namespace AngleSharp.Dom.Html
             var method = Method.ToEnum(HttpMethod.Get);
             var newDocumentTask = SubmitForm(method, scheme, action);
 
-            newDocumentTask.ContinueWith(task => targetBrowsingContext?.NavigateTo(task.Result));
+            newDocumentTask.ContinueWith(task => Owner?.NotifyNavigatedAway(task.Result));
             
             return newDocumentTask;
         }

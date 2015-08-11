@@ -1,4 +1,6 @@
-﻿namespace AngleSharp.Dom
+﻿using AngleSharp.Events;
+
+namespace AngleSharp.Dom
 {
     using AngleSharp.Dom.Collections;
     using AngleSharp.Dom.Events;
@@ -415,6 +417,8 @@
             add { AddEventListener(EventNames.Waiting, value); }
             remove { RemoveEventListener(EventNames.Waiting, value); }
         }
+
+        public event EventHandler<DocumentChangedEventArgs> NavigatedAway;
 
         #endregion
 
@@ -1783,6 +1787,11 @@
             target._sandbox = source._sandbox;
             target._async = source._async;
             target._contentType = source._contentType;
+        }
+
+        internal void NotifyNavigatedAway(IDocument newDocument)
+        {
+            NavigatedAway?.Invoke(this, new DocumentChangedEventArgs(newDocument));
         }
 
         #endregion

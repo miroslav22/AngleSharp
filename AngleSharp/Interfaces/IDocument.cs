@@ -1,4 +1,6 @@
-﻿namespace AngleSharp.Dom
+﻿using AngleSharp.Events;
+
+namespace AngleSharp.Dom
 {
     using System;
     using System.Collections.Generic;
@@ -14,6 +16,11 @@
     [DomName("Document")]
     public interface IDocument : INode, IParentNode, IGlobalEventHandlers, IDocumentStyle, INonElementParentNode, IDisposable
     {
+        /// <summary>
+        /// Fired when the document is navigated away from
+        /// </summary>
+        event EventHandler<DocumentChangedEventArgs> NavigatedAway;
+
         /// <summary>
         /// Gets a list of all elements in the document.
         /// </summary>
